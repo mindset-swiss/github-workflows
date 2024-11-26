@@ -6,6 +6,13 @@ on:
       docker-image-name:
         required: true
         type: string
+    skip-deploy-step:
+      required: false
+      default: false
+      type: boolean
+      description: |
+        This parameter is used to skip the deploy step in the workflow. With the new workflow, the deployment is being
+        done when the image is pushed to the ECR. The ssh action can be skipped by setting this parameter to true.
 
 jobs:
   deploy-server:
@@ -65,7 +72,7 @@ jobs:
 
       - name: executing remote ssh commands using private key
         uses: appleboy/ssh-action@v1.0.0
-        if: github.ref_name == 'main'
+        if: github.ref_name == 'main' && inputs.skip-deploy-step == false
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
